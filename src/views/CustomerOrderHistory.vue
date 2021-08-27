@@ -19,22 +19,9 @@
 
           <template v-slot:row-details="row">
             <b-card>
-              <div v-for="x in row.item.booking" :key="x._id" style="margin: 0 auto;">
                 <div class="mb-2">
-                  <b-row>
-                    <b-col sm="4" md="3" lg="3">
-                      <b class="items-booked">Items booked:</b>
-                    </b-col>
-                    <b-col class="ml-5">
-                      <b-row
-                        class="cultivars-booked"
-                        v-for="(y,index) in x.itemOrdered"
-                        :key="y.id"
-                        :index="index"
-                      >{{index+1}}. {{y.name}}: {{y.bookingWeight}}kg</b-row>
-                    </b-col>
-                  </b-row>
-                </div>
+                  <b-table :items="row.item.content" :fields="[{key: 'name', label: 'Cultivar'}, {key: 'quantity', label: 'Quantity (grid)'}]">
+                  </b-table>
 
                 <div>
                   <b-row>
@@ -101,9 +88,9 @@ export default {
     }
   },
   methods: {
-    async render() {
+    async callAPI() {
       this.isBusy = true
-      await this.getHistory(this.startDate, this.endDate, this.farmLocation);
+      await this.getHistory(this.farmLocation);
       
       if (this.history !=-1){
         await this.formatDate();
@@ -111,13 +98,13 @@ export default {
       this.isBusy = false
     },
 
-    async getHistory(date1, date2, farm) {
-      let query = `${process.env.VUE_APP_ROOT_API}/bin_booking?location=${farm}&email=${JSON.parse(localStorage.user).user.email}&startDate=${date1}&endDate=${date2}`
-      const x = await axios.get(query)
+    async getHistory(farm) {
+      let query = `${process.env.VUE_APP_ROOT_API}/bin_booking?location=${farm}&email=${JSON.parse(localStorage.user).user.email}`
       try {
-        let tempArr=x.data
-        if (tempArr.length>0){
-          this.history = x.data
+        const x = await axios.get(query)
+
+        if (x.data.data.length>0){
+          this.history = x.data.data
         }
 
         else{
@@ -137,7 +124,7 @@ export default {
   },
 
   mounted() {
-    this.render()
+    this.callAPI()
   }
 }
 </script>

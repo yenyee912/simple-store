@@ -98,6 +98,8 @@
 
 <script>
 import axios from "axios"
+import moment from "moment"
+
 export default {
   props: {
     mySummary: {
@@ -147,6 +149,7 @@ export default {
 
     async submitBooking() {
       try {
+        this.mySummary.orderDate= moment().format("YYYY-MM-DD"),
         this.mySummary.remarks= this.remarks
         this.mySummary.binCount= this.calcDisplay.length      
         const x = await axios.post(`${process.env.VUE_APP_ROOT_API}/bin_booking`, this.mySummary)
