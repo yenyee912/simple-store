@@ -1,4 +1,5 @@
 # simple-store
+Simple ecommerce website created with VueJS.
 
 ## Project setup
 ```
